@@ -38,14 +38,16 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		batch.begin();
 		batch.draw(backgroundTexture,0,0);
-		batch.draw(img, x, y);
+		
 
 		x = p.move()[0];
 		y = p.move()[1];
-		//Thread.sleep((long)(1000/30-Gdx.graphics.getDeltaTime()));
 
-
+		
 		state = p.state();
+		
+		batch.draw(img, x, y);
+		
 		if(state .equals( "RIGHT")) {
 			img = new Texture("Original_PacMan_RIGHT.png");
 		}

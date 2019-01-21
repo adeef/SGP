@@ -66,17 +66,18 @@ public class Pacman {
         else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && level[Ax][Ay-1] != 4 && level[Ax][Ay-1] != 5 ) {
             state = "DOWN";
         }
-        if(state.equals("RIGHT")&& level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ){
-            x += 2;
+        
+        if(state.equals("RIGHT") && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ){
+            x+=2;
         }
-        if(state.equals("LEFT")&& level[Ax-1][Ay] != 4 && level[Ax-1][Ay] != 5 ){
-            x -= 2;
+        if(state.equals("LEFT") && level[Ax-1][Ay] != 4 && level[Ax-1][Ay] != 5 ){
+            x-=2;
         }
-        if(state.equals("UP")&&level[Ax][Ay+1] != 4 && level[Ax][Ay+1] != 5 ){
-            y += 2;
+        if(state.equals("UP") && level[Ax][Ay+1] != 4 && level[Ax][Ay+1] != 5 ){
+            y+=2;
         }
-        if(state.equals("DOWN")&&level[Ax][Ay-1] != 4 && level[Ax][Ay-1] != 5 ){
-            y -= 2;
+        if(state.equals("DOWN") && level[Ax][Ay-1] != 4 && level[Ax][Ay-1] != 5 ){
+            y-=2;
         }
         if(x <= 24){
             x = 624;
@@ -84,8 +85,8 @@ public class Pacman {
         if(x >= 648){
             x = 48;
         }
-        //System.out.println(Ax*24);
-        //System.out.println(Ay*24);
+        System.out.println(Ax*24);
+        System.out.println(Ay*24);
         pos[0] = Ax*24;
         pos[1] = Ay*24;
         return pos;
