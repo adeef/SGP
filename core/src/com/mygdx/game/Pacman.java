@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Pacman {
-    
+
     private static int x;
     private static int y;
     private static String state;
@@ -39,36 +39,44 @@ public class Pacman {
             {4, 2, 2, 2, 2, 4, 4, 3, 2, 2, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 2, 2, 2, 2, 3, 2, 2, 4},
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
     };
-    
+
     public Pacman(){
         x = 48;//starting position
         y = 24;
         state = "RIGHT";
     }
-    
+
     public int[] move() {
         int[] pos = new int[2];//stores x,y
         int Ax = x/24;//position in array
         int Ay = y/24;
-        
+
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ) {
-            x += 8;
             state = "RIGHT";
         }
-        
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && level[Ax-1][Ay] != 4 && level[Ax-1][Ay] != 5 ) {
-            x -= 8;
+
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && level[Ax-1][Ay] != 4 && level[Ax-1][Ay] != 5 ) {
             state = "LEFT";
         }
-        
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && level[Ax][Ay+1] != 4 && level[Ax][Ay+1] != 5 ) {
-            y += 8;
+
+        else if (Gdx.input.isKeyPressed(Input.Keys.UP) && level[Ax][Ay+1] != 4 && level[Ax][Ay+1] != 5 ) {
             state = "UP";
         }
-        
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && level[Ax][Ay-1] != 4 && level[Ax][Ay-1] != 5 ) {
-            y -= 8;
+
+        else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && level[Ax][Ay-1] != 4 && level[Ax][Ay-1] != 5 ) {
             state = "DOWN";
+        }
+        if(state.equals("RIGHT")&& level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ){
+            x += 2;
+        }
+        if(state.equals("LEFT")&& level[Ax-1][Ay] != 4 && level[Ax-1][Ay] != 5 ){
+            x -= 2;
+        }
+        if(state.equals("UP")&&level[Ax][Ay+1] != 4 && level[Ax][Ay+1] != 5 ){
+            y += 2;
+        }
+        if(state.equals("DOWN")&&level[Ax][Ay-1] != 4 && level[Ax][Ay-1] != 5 ){
+            y -= 2;
         }
         if(x <= 24){
             x = 624;
@@ -76,8 +84,8 @@ public class Pacman {
         if(x >= 648){
             x = 48;
         }
-        System.out.println(Ax*24);
-        System.out.println(Ay*24);
+        //System.out.println(Ax*24);
+        //System.out.println(Ay*24);
         pos[0] = Ax*24;
         pos[1] = Ay*24;
         return pos;
