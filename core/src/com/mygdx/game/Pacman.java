@@ -3,12 +3,15 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-
+import java.util.*;
 public class Pacman {
 
     private static int x;
     private static int y;
     private static String state;
+    private static int points;
+    private int Ax = x;//position in array
+    private int Ay = y;
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 5, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
             {4, 2, 2, 2, 2, 4, 4, 3, 2, 2, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 2, 2, 2, 2, 3, 2, 2, 4},
@@ -44,12 +47,13 @@ public class Pacman {
         x = 48;//starting position
         y = 24;
         state = "RIGHT";
+
     }
 
     public int[] move() {
         int[] pos = new int[2];//stores x,y
-        int Ax = x/24;//position in array
-        int Ay = y/24;
+        Ax = x/24;
+        Ay = y/24;
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ) {
             state = "RIGHT";
@@ -80,18 +84,26 @@ public class Pacman {
             y-=2;
         }
         if(x <= 24){
-            x = 624;
+            x = 647;
         }
         if(x >= 648){
-            x = 48;
+            x = 24;
         }
-        System.out.println(Ax*24);
-        System.out.println(Ay*24);
+
         pos[0] = Ax*24;
         pos[1] = Ay*24;
         return pos;
     }
     public String state(){
         return state;
+    }
+    public int grub(){
+        Ax = x/24;
+        Ay = y/24;
+        
+        if(level[Ax][Ay] == 2){
+            points+=10;
+        }
+        return points;
     }
 }
