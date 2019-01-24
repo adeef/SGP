@@ -6,9 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import java.util.*;
 public class Pacman {
 
-    private static int x;
-    private static int y;
-    private static String state;
+    private static int x = 48;
+    private static int y = 24;
+    private static String state = "RIGHT";
     private static int points;
     private int Ax = x;//position in array
     private int Ay = y;
@@ -43,12 +43,6 @@ public class Pacman {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
     };
 
-    public Pacman(){
-        x = 48;//starting position
-        y = 24;
-        state = "RIGHT";
-
-    }
 
     public int[] move() {
         int[] pos = new int[2];//stores x,y
