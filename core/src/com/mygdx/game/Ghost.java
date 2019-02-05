@@ -8,6 +8,10 @@ public class Ghost {
     private int Ax;//position in array
     private int Ay;
     private String color;
+    
+    public Ghost(String color){
+        this.color = color;
+    }
 
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 5, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},

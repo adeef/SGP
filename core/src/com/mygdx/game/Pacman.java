@@ -88,15 +88,23 @@ public class Pacman {
         pos[1] = Ay*24;
         return pos;
     }
+    
     public String state(){
+        
         return state;
     }
+    
     public int grub(){
         Ax = x/24;
         Ay = y/24;
         
         if(level[Ax][Ay] == 2){
             points+=10;
+            level[Ax][Ay] = 0;
+        }
+        if(level[Ax][Ay] == 3){
+            points+=50;
+            level[Ax][Ay] = 0;
         }
         return points;
     }
