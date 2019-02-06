@@ -3,6 +3,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+
+import java.lang.reflect.Array;
 import java.util.*;
 public class Pacman {
 
@@ -92,6 +94,20 @@ public class Pacman {
     public String state(){
         
         return state;
+    }
+    public ArrayList<int[]> drawing(){
+        ArrayList<int[]> dots = new ArrayList<int[]>();
+        for(int i = 0; i < 28;i++){
+            for(int j = 0; j < 31;j++){
+                if(level[i][j] == 2){
+                    int[] t = new int[2];
+                    t[0] = i;
+                    t[1] = j;
+                    dots.add(t);
+                }
+            }
+        }
+        return dots;
     }
 
     

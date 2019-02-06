@@ -13,12 +13,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import sun.font.TrueTypeFont;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class MyGdxGame extends ApplicationAdapter {
 
 	SpriteBatch batch;
-	Texture img;
+	Texture pac;
 	Texture backgroundTexture;
 	BitmapFont font;
 	ShapeRenderer sr;
@@ -36,7 +37,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		
 		batch = new SpriteBatch();
 		backgroundTexture = new Texture("fullLevel.png");
-		img = new Texture("Original_PacMan_RIGHT.png");
+		pac = new Texture("Original_PacMan_RIGHT.png");
 
 		font = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
 		sr = new ShapeRenderer();
@@ -53,6 +54,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
 		batch.begin();
 
 		batch.draw(backgroundTexture,0,0);
@@ -67,36 +69,34 @@ public class MyGdxGame extends ApplicationAdapter {
 		String points = "SCORE: "+p.grub()[0];
 		font.draw(batch, points, 0,788);
 
-
-
-		batch.draw(img, x, y);
+		
+		batch.draw(pac, x, y);
 
 
 		if(state .equals("RIGHT")) {
-			img = new Texture("Original_PacMan_RIGHT.png");
+			pac = new Texture("Original_PacMan_RIGHT.png");
 		}
 		if(state .equals("LEFT")) {
-			img = new Texture("Original_PacMan.png");
+			pac = new Texture("Original_PacMan.png");
 		}
 		if(state .equals("DOWN")) {
-			img = new Texture("Original_PacMan_DOWN.png");
+			pac = new Texture("Original_PacMan_DOWN.png");
 		}
 		if(state .equals("UP")) {
-			img = new Texture("Original_PacMan_UP.png");
+			pac = new Texture("Original_PacMan_UP.png");
 		}
 		batch.end();
 		
 		sr.begin(ShapeType.Filled);
-		sr.setColor(0,0,0,0);
-		
-		int[] x = new int[2];
-		x[0] = p.grub()[1]*24;
-		x[1] = p.grub()[2]*24;
-		eaten.add(x);
-		for(int i = 0; i < eaten.size();i++){
-			sr.rect(eaten.get(i)[0],eaten.get(i)[1],32,32);
+		sr.setColor(1,0,0,0);
+		ArrayList<int[]>drawDots = p.drawing();
+		for(int i = 0; i < drawDots.size(); i++){
+			sr.rect(drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12,4,4);
 		}
+		
 		sr.end();
+		
+
 
 	}
 
@@ -104,7 +104,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
+		pac.dispose();
 		font.dispose();
 		sr.dispose();
 	}
