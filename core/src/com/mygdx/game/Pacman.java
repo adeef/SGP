@@ -93,19 +93,27 @@ public class Pacman {
         
         return state;
     }
+
     
-    public int grub(){
+    public int[] grub(){
         Ax = x/24;
         Ay = y/24;
         
         if(level[Ax][Ay] == 2){
             points+=10;
+            
             level[Ax][Ay] = 0;
+            
         }
         if(level[Ax][Ay] == 3){
             points+=50;
             level[Ax][Ay] = 0;
         }
-        return points;
+        int[] r = new int[3];
+        r[0] = points;
+        r[1] = Ax;
+        r[2] = Ay;
+        return r;
+        
     }
 }

@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import sun.font.TrueTypeFont;
 
 import java.util.*;
@@ -19,11 +21,13 @@ public class MyGdxGame extends ApplicationAdapter {
 	Texture img;
 	Texture backgroundTexture;
 	BitmapFont font;
+	ShapeRenderer sr;
 
 	int x=0;
 	int y=0;
 	String state = "RIGHT";
 	Pacman p = new Pacman();
+	ArrayList<int[]> eaten = new ArrayList<int[]>();
 	
 
 	@Override
@@ -35,6 +39,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		img = new Texture("Original_PacMan_RIGHT.png");
 
 		font = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
+		sr = new ShapeRenderer();
+
 
 
 
@@ -58,8 +64,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		
 		state = p.state();
 		
-		String points = "SCORE: "+p.grub();
+		String points = "SCORE: "+p.grub()[0];
 		font.draw(batch, points, 0,788);
+
 
 
 		batch.draw(img, x, y);
@@ -77,9 +84,19 @@ public class MyGdxGame extends ApplicationAdapter {
 		if(state .equals("UP")) {
 			img = new Texture("Original_PacMan_UP.png");
 		}
-
-
 		batch.end();
+		
+		sr.begin(ShapeType.Filled);
+		sr.setColor(0,0,0,0);
+		
+		int[] x = new int[2];
+		x[0] = p.grub()[1]*24;
+		x[1] = p.grub()[2]*24;
+		eaten.add(x);
+		for(int i = 0; i < eaten.size();i++){
+			sr.rect(eaten.get(i)[0],eaten.get(i)[1],32,32);
+		}
+		sr.end();
 
 	}
 
@@ -89,6 +106,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.dispose();
 		img.dispose();
 		font.dispose();
+		sr.dispose();
 	}
 
 }
