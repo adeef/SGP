@@ -35,4 +35,24 @@ public class Timer {
         elapsed = ((double)(stopTime - startTime)) / 1000;
         return elapsed;
     }
+    public String time_converter(int secs){
+        String sec_out;
+        String min_out;
+        int minutes=secs/60;
+        secs=secs-(minutes*60);
+        if(secs<10){
+            sec_out="0"+secs;
+        }
+        else{
+            sec_out=""+secs;
+        }
+        if(minutes<10){
+            min_out="0"+minutes;
+        }
+        else{
+            min_out=""+minutes;
+        }
+
+        return ""+min_out+":"+sec_out;
+    }
 } 

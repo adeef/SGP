@@ -68,16 +68,16 @@ public class Pacman {
         }
         
         if(state.equals("RIGHT") && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ){
-            x+=2;
+            x+=3;
         }
         if(state.equals("LEFT") && level[Ax-1][Ay] != 4 && level[Ax-1][Ay] != 5 ){
-            x-=2;
+            x-=3;
         }
         if(state.equals("UP") && level[Ax][Ay+1] != 4 && level[Ax][Ay+1] != 5 ){
-            y+=2;
+            y+=3;
         }
         if(state.equals("DOWN") && level[Ax][Ay-1] != 4 && level[Ax][Ay-1] != 5 ){
-            y-=2;
+            y-=3;
         }
         if(x <= 24){
             x = 647;
@@ -143,5 +143,8 @@ public class Pacman {
         r[2] = Ay;
         return r;
         
+    }
+    public boolean bigDot(){
+        return level[x/24][y/24] == 3;
     }
 }

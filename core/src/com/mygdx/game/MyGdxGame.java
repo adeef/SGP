@@ -35,28 +35,36 @@ public class MyGdxGame extends ApplicationAdapter {
 	
 	
 	
-	int Rx = 0;
+	int Rx = 0;//red ghost coords
 	int Ry = 0;
 	
-	int Bx = 0;
+	int Bx = 0;//blue ghost coords
 	int By = 0;
+
+    int Ox = 0;//orange ghost coords
+    int Oy = 0;
+
+    int Pix = 0;//pink ghost coords
+    int Piy = 0;
+
+    int[][] pos = {{Rx,Ry},{Bx,By},{Pix,Piy},{Ox,Oy}};
 
     Ghost red = new Ghost("red");
     Ghost blue = new Ghost("blue");
-	
+	Ghost pink = new Ghost("pink");
+	Ghost orange = new Ghost("orange");
 	
 	String state = "RIGHT";//pacmans state
 	Pacman p = new Pacman();
 	ArrayList<int[]> eaten = new ArrayList<int[]>();
-	
-	
-	Timer t = new Timer();
+
+
+    Timer t = new Timer();
 
 
 
-	
 
-	@Override
+    @Override
 	public void create () {
 		Gdx.graphics.setWindowedMode(672, 800);
 		
@@ -85,29 +93,11 @@ public class MyGdxGame extends ApplicationAdapter {
             batch.draw(play_btn_hover,224,371);
             if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
                 start=false;
+                t = new Timer();
             }
         }
     }
-    public String time_converter(int secs){
-	    String sec_out;
-	    String min_out;
-	    int minutes=secs/60;
-	    secs=secs-(minutes*60);
-	    if(secs<10){
-	        sec_out="0"+secs;
-        }
-        else{
-            sec_out=""+secs;
-        }
-        if(minutes<10){
-            min_out="0"+minutes;
-        }
-        else{
-            min_out=""+minutes;
-        }
 
-	    return ""+min_out+":"+sec_out;
-    }
 	@Override
 	public void render () {
 
@@ -138,30 +128,14 @@ public class MyGdxGame extends ApplicationAdapter {
             if(state .equals("UP")) {
                 pac = new Texture("Original_PacMan_UP.png");
             }
-
-
-            Px = p.move()[0];//player move
-            Py = p.move()[1];
-
-            Rx = red.move(Px,Py)[0];//red ghost move
-            Ry = red.move(Px,Py)[1];
             
-            Bx = blue.move(Px,Py)[0];//blue ghost move
-            By = blue.move(Px,Py)[1];
+            movement();//moves player and ghosts
+            
+            drawO();
 
-            batch.draw(redG,Rx,Ry);//red ghost
-            batch.draw(redG,Bx,By);//blue ghost
-
-            String points = "SCORE: "+p.grub()[0];
-            font.draw(batch, points, 0,788);
-            t.stop();
-            String time_display=time_converter((int)t.getElapsedTimeSecs());
-            String elap = "TIME: "+time_display;
-            time.draw(batch,elap,250,788);
-
-
+            timer();
+            
             batch.draw(pac, Px, Py);
-
 
         }
         batch.end();
@@ -188,7 +162,38 @@ public class MyGdxGame extends ApplicationAdapter {
         }
 
     }
+    public void movement(){
+        Ghost[] ghosts = new Ghost[4];
+        ghosts[0] = red;
+        ghosts[1] = blue;
+        ghosts[2] = pink;
+        ghosts[3] = orange;
+        
 
+        Px = p.move()[0];
+        Py = p.move()[1];
+        
+        for(int i = 0; i < ghosts.length; i++){
+            pos[i][0] = ghosts[i].move(Px,Py)[0];
+            pos[i][1] = ghosts[i].move(Px,Py)[1];
+        }
+    }
+    
+    public void timer(){
+        String points = "SCORE: "+p.grub()[0];
+        font.draw(batch, points, 0,788);
+        t.stop();
+        int secs = (int)t.getElapsedTimeSecs();
+        String time_display= t.time_converter(secs);
+        String elap = "TIME: "+time_display;
+        time.draw(batch,elap,250,788);
+    }
+    
+    public void drawO(){//drawing ghost positions
+        for(int i = 0; i < 4; i++){
+            batch.draw(redG,pos[i][0],pos[i][1]);
+        }
+    }
 
 	@Override
 	public void dispose () {
@@ -197,5 +202,4 @@ public class MyGdxGame extends ApplicationAdapter {
 		font.dispose();
 		sr.dispose();
 	}
-
 }
