@@ -60,16 +60,16 @@ public class Ghost {
 
 
         if (state.equals("right")) {
-            x += 1;
+            x += 2;
         }
         else if (state.equals("left")) {
-            x -= 1;
+            x -= 2;
         }
         else if (state.equals("up")) {
-            y += 1;
+            y += 2;
         }
         else if (state.equals("down")) {
-            y -= 1;
+            y -= 2;
         }
         if(x <= 24){
             x = 647;

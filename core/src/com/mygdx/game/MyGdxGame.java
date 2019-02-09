@@ -130,8 +130,8 @@ public class MyGdxGame extends ApplicationAdapter {
             Px = p.move()[0];
             Py = p.move()[1];
 
-            //Rx = red.move()[0];
-            //Ry = red.move()[1];
+            Rx = red.move()[0];
+            Ry = red.move()[1];
 
             batch.draw(redG,Rx,Ry);//red ghost
 
@@ -151,7 +151,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 
 
-        if(start!=true){
+        if(!start){
             sr.begin(ShapeType.Filled);
             sr.setColor(1,1,1,0);
             ArrayList<int[]>drawDots = p.drawing(2);
@@ -165,9 +165,7 @@ public class MyGdxGame extends ApplicationAdapter {
             for(int i = 0; i < drawDots.size(); i++){
                 sr.rect(drawDots.get(i)[0]*24+6,drawDots.get(i)[1]*24+6,12,12);
             }
-            if(p.winner()){
-                System.out.println("YOU WON!");
-            }
+
 
             sr.end();
         }
