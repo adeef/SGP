@@ -25,11 +25,22 @@ public class MyGdxGame extends ApplicationAdapter {
 	ShapeRenderer sr;
 	Texture redG;
 
-	int Px=0;
+	int Px=0;//player coords
 	int Py=0;
 	
-	int Rx = 0;
+	int Rx = 0;//red ghost coords
 	int Ry = 0;
+
+	int Bx = 0;//blue ghost coords
+	int By = 0;
+
+	int Ox = 0;//orange ghost coords
+	int Oy = 0;
+
+	int Pix = 0;//pink ghost coords
+	int Piy = 0;
+	
+	
 	String state = "RIGHT";
 	Pacman p = new Pacman();
 	ArrayList<int[]> eaten = new ArrayList<int[]>();
@@ -37,6 +48,9 @@ public class MyGdxGame extends ApplicationAdapter {
 
 
 	Ghost red = new Ghost("red");
+	Ghost orange = new Ghost("orange");
+	Ghost pink = new Ghost("pink");
+	Ghost blue = new Ghost("blue");
 	
 
 	@Override
@@ -91,10 +105,24 @@ public class MyGdxGame extends ApplicationAdapter {
 		Px = p.move()[0];
 		Py = p.move()[1];
 
-		//Rx = red.move()[0];
-		//Ry = red.move()[1];
 
 		batch.draw(redG,Rx,Ry);//red ghost
+		Rx = red.move()[0];
+		Ry = red.move()[1];
+
+		
+		batch.draw(redG,Bx,By);//blue ghost
+		Bx = blue.move()[0];
+		By = blue.move()[1];
+
+		batch.draw(redG,Ox,Oy);//orange ghost
+		Ox = orange.move()[0];
+		Oy = orange.move()[1];
+
+		batch.draw(redG,Pix,Piy);//pink ghost
+		Pix = pink.move()[0];
+		Piy = pink.move()[1];
+		
 
 		String points = "SCORE: "+p.grub()[0];
 		font.draw(batch, points, 0,788);

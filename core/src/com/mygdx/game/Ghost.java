@@ -7,6 +7,9 @@ public class Ghost {
     private int x = 48;
     private int y = 24;
     private String state = "right";
+    private int prevAx;
+    private int prevAy;
+    
     
     private String color;
     
@@ -16,7 +19,7 @@ public class Ghost {
     }
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-            {4, 6, 2, 2, 6, 4, 4, 3, 2, 2, 6, 4, 0, 0, 0, 4, 0, 4, 7, 0, 0, 4, 6, 2, 2, 6, 2, 3, 2, 6, 4},
+            {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 0, 0, 0, 4, 0, 4, 7, 0, 0, 4, 6, 2, 2, 6, 2, 6, 2, 6, 4},
             {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 4, 4, 2, 4, 4, 4, 2, 4},
             {4, 2, 4, 4, 6, 2, 2, 6, 4, 4, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 4, 4, 2, 4, 0, 4, 2, 4},
             {4, 2, 4, 4, 2, 4, 4, 4, 4, 4, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 4, 4, 2, 4, 0, 4, 2, 4},
@@ -41,7 +44,7 @@ public class Ghost {
             {4, 2, 4, 4, 2, 4, 4, 4, 4, 4, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 4, 4, 2, 4, 0, 4, 2, 4},
             {4, 2, 4, 4, 6, 2, 2, 6, 4, 4, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 4, 4, 2, 4, 0, 4, 2, 4},
             {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 4, 4, 2, 4, 4, 4, 2, 4},
-            {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 6, 2, 2, 6, 2, 3, 2, 6, 4},
+            {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 6, 2, 2, 6, 2, 6, 2, 6, 4},
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
     };
 
@@ -50,21 +53,23 @@ public class Ghost {
         int[] pos = new int[2];
         int Ax = x/24;
         int Ay = y/24;
-        if(level[Ax][Ay] == 6) {
+        
+        if(level[Ax][Ay] == 6 && (Ax != prevAx || Ay != prevAy)) {//checks if ghost is at a junction and new position isnt the old one
             state = PosChoice();
         }
 
+
         if (state.equals("right")) {
-            Ax += 1;
+            x += 1;
         }
         else if (state.equals("left")) {
-            Ax -= 1;
+            x -= 1;
         }
         else if (state.equals("up")) {
-            Ay += 1;
+            y += 1;
         }
         else if (state.equals("down")) {
-            Ay -= 1;
+            y -= 1;
         }
         if(x <= 24){
             x = 647;
@@ -73,16 +78,16 @@ public class Ghost {
             x = 24;
         }
         
-        x = Ax*24;
-        y = Ay*24;
-                
-        pos[0] = x;
-        pos[1] = y;
+        prevAx = Ax;
+        prevAy = Ay;
+        
+        pos[0] = x/24*24;
+        pos[1] = y/24*24;
 
         
         return pos;
     }
-    public String PosChoice(){
+    public String PosChoice(){//when at a junction, adds possible directions
         ArrayList<String> choices = new ArrayList<String>();
         int Ax = x/24;
         int Ay = y/24;
@@ -103,12 +108,12 @@ public class Ghost {
             }
         }
         if(Ay > 0) {
-            if (level[Ax][Ay - 1] != 4 && level[Ax][Ay] != 5) {
+            if (level[Ax][Ay - 1] != 4 && level[Ax][Ay - 1] != 5) {
                 choices.add("down");
             }
         }
         
-        if(choices.size() > 1){
+        if(choices.size() > 1){//avoids going back and forth(removing opposite direction)
             if(state .equals("left")) {
                 choices.remove("right");
             }
@@ -123,7 +128,7 @@ public class Ghost {
             }
         }
         
-        int c = (int)(Math.random()*(choices.size()));
+        int c = (int)(Math.random()*(choices.size()));//randomly select a direction
         System.out.println("STATE: "+state+" CHOICE: "+choices.get(c));
 
 
