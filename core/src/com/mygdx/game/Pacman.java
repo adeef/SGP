@@ -50,7 +50,8 @@ public class Pacman {
         int[] pos = new int[2];//stores x,y
         Ax = x/24;
         Ay = y/24;
-
+        
+        
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ) {
             state = "RIGHT";
         }
@@ -65,6 +66,7 @@ public class Pacman {
 
         else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && level[Ax][Ay-1] != 4 && level[Ax][Ay-1] != 5 ) {
             state = "DOWN";
+
         }
         
         if(state.equals("RIGHT") && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ){
@@ -88,6 +90,8 @@ public class Pacman {
 
         pos[0] = Ax*24;
         pos[1] = Ay*24;
+
+        
         return pos;
     }
     
@@ -95,11 +99,11 @@ public class Pacman {
         
         return state;
     }
-    public ArrayList<int[]> drawing(){
+    public ArrayList<int[]> drawing(int check){
         ArrayList<int[]> dots = new ArrayList<int[]>();
         for(int i = 0; i < 28;i++){
             for(int j = 0; j < 31;j++){
-                if(level[i][j] == 2){
+                if(level[i][j] == check){
                     int[] t = new int[2];
                     t[0] = i;
                     t[1] = j;
@@ -109,7 +113,17 @@ public class Pacman {
         }
         return dots;
     }
+    public boolean winner() {
+        for (int i = 0; i < 28; i++) {
+            for (int j = 0; j < 31; j++) {
+                if(level[i][j] == 2 || level[i][j] == 3){
+                    return false;
+                }
 
+            }
+        }
+        return true;
+    }
     
     public int[] grub(){
         Ax = x/24;
