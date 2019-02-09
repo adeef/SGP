@@ -32,15 +32,28 @@ public class MyGdxGame extends ApplicationAdapter {
 	int Px=0;
 	int Py=0;
 	boolean start=true;
+	
+	
+	
 	int Rx = 0;
 	int Ry = 0;
-	String state = "RIGHT";
+	
+	int Bx = 0;
+	int By = 0;
+
+    Ghost red = new Ghost("red");
+    Ghost blue = new Ghost("blue");
+	
+	
+	String state = "RIGHT";//pacmans state
 	Pacman p = new Pacman();
 	ArrayList<int[]> eaten = new ArrayList<int[]>();
+	
+	
 	Timer t = new Timer();
 
 
-	Ghost red = new Ghost("red");
+
 	
 
 	@Override
@@ -127,13 +140,17 @@ public class MyGdxGame extends ApplicationAdapter {
             }
 
 
-            Px = p.move()[0];
+            Px = p.move()[0];//player move
             Py = p.move()[1];
 
-            Rx = red.move()[0];
-            Ry = red.move()[1];
+            Rx = red.move(Px,Py)[0];//red ghost move
+            Ry = red.move(Px,Py)[1];
+            
+            Bx = blue.move(Px,Py)[0];//blue ghost move
+            By = blue.move(Px,Py)[1];
 
             batch.draw(redG,Rx,Ry);//red ghost
+            batch.draw(redG,Bx,By);//blue ghost
 
             String points = "SCORE: "+p.grub()[0];
             font.draw(batch, points, 0,788);

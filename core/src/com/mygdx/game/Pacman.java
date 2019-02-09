@@ -2,10 +2,8 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
-
-import java.lang.reflect.Array;
 import java.util.*;
+
 public class Pacman {
 
     private static int x = 48;
@@ -99,7 +97,7 @@ public class Pacman {
         
         return state;
     }
-    public ArrayList<int[]> drawing(int check){
+    public ArrayList<int[]> drawing(int check){//drawing dots
         ArrayList<int[]> dots = new ArrayList<int[]>();
         for(int i = 0; i < 28;i++){
             for(int j = 0; j < 31;j++){
@@ -113,7 +111,7 @@ public class Pacman {
         }
         return dots;
     }
-    public boolean winner() {
+    public boolean winner() {//check if all dots are eaten
         for (int i = 0; i < 28; i++) {
             for (int j = 0; j < 31; j++) {
                 if(level[i][j] == 2 || level[i][j] == 3){
@@ -125,7 +123,7 @@ public class Pacman {
         return true;
     }
     
-    public int[] grub(){
+    public int[] grub(){//if pacman is over a dot, he eats it and points are added
         Ax = x/24;
         Ay = y/24;
         
