@@ -8,8 +8,8 @@ import java.util.*;
 
 public class Pacman {
 
-    private static int x = 48;
-    private static int y = 24;
+    private static int x = 2*24;
+    private static int y = 1*24;
     private static String state = "RIGHT";
     private static int points;
     private int Ax = x;//position in array
@@ -47,7 +47,6 @@ public class Pacman {
             {4, 2, 2, 2, 2, 4, 4, 3, 2, 2, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 2, 2, 2, 2, 3, 2, 2, 4},
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
     };
-
 
     public int[] move() {
         int[] pos = new int[2];//stores x,y
@@ -153,6 +152,12 @@ public class Pacman {
     public void points_add(int point_addition){
         points+=point_addition;
 
+    }
+    public void points_reset(){
+        points=0;
+        x=2*24;
+        y=1*24;
+        state="RIGHT";
     }
     public void reset(){
         x = 48;

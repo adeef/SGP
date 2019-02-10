@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.ArrayList;
@@ -81,7 +82,8 @@ public class Ghost {
     
     public int[] move(int PacX,int PacY){
         isEaten();
-        
+        int mx= Gdx.input.getX();
+        int my=Gdx.input.getY();
         if(eaten && x/24 == 1 && y/24 == 1){
             scared = false;
             eaten = false;
@@ -277,13 +279,12 @@ public class Ghost {
         return scared;
     }
 
-    
+
     public void isEaten(){
         if(!eaten){
             if(x/24 == PacX/24 && y/24 == PacY/24 && scared){
                 eaten = true;
 
-                System.out.println("wowow");
             }
         }
 
