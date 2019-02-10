@@ -2,6 +2,8 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+
 import java.util.*;
 
 public class Pacman {
@@ -12,6 +14,8 @@ public class Pacman {
     private static int points;
     private int Ax = x;//position in array
     private int Ay = y;
+    private int animation_count=0;
+    int frame=1;
 
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 5, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
@@ -49,8 +53,9 @@ public class Pacman {
         int[] pos = new int[2];//stores x,y
         Ax = x/24;
         Ay = y/24;
-        
-        
+
+        int mx= Gdx.input.getX();
+        int my= Gdx.input.getY();
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ) {
             state = "RIGHT";
         }
@@ -144,7 +149,10 @@ public class Pacman {
         r[1] = Ax;
         r[2] = Ay;
         return r;
-        
+    }
+    public void points_add(int point_addition){
+        points+=point_addition;
+
     }
     public void reset(){
         x = 48;
@@ -153,5 +161,21 @@ public class Pacman {
     public boolean bigDot(){
         boolean eaten = level[x/24][y/24] == 3;
         return eaten;
+    }
+
+    public Texture pac_pic(){
+        if(animation_count==10){
+            if(frame==1){
+                frame=2;
+            }
+            else{
+                frame=1;
+            }
+            animation_count=0;
+        }
+        animation_count+=1;
+        Texture pic = new Texture("Original_PacMan_"+state+frame+".png");
+        return pic;
+
     }
 }

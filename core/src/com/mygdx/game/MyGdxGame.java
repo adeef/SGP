@@ -24,7 +24,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	Texture backgroundTexture;
 	BitmapFont font;
 	Texture life;
-	
+	Texture dot;
+	Texture big_dot;
 	BitmapFont time;
 	
 	ShapeRenderer sr;
@@ -32,8 +33,9 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	int Px=0;
 	int Py=0;
+
 	boolean start=true;
-	
+
 	
 	
 	int Rx = 0;//red ghost coords
@@ -62,7 +64,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	
 	String state = "RIGHT";//pacmans state
 	Pacman p = new Pacman();
-	ArrayList<int[]> eaten = new ArrayList<int[]>();
 
 
     Timer t = new Timer();
@@ -76,18 +77,19 @@ public class MyGdxGame extends ApplicationAdapter {
 		
 		batch = new SpriteBatch();
 		backgroundTexture = new Texture("fullLevel.png");
-		pac = new Texture("Original_PacMan_RIGHT.png");
+		pac = new Texture("Original_PacMan_RIGHT1.png");
 		Main_Menu= new Texture("Main_Menu.png");
 		play_btn=new Texture("Play_button.png");
 		play_btn_hover=new Texture("Play_button_Hover.png");
 		redG = new Texture("redL.png");
-
+		dot=new Texture("point1.png");
+        big_dot=new Texture("big_point1.png");
 		font = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
 		time = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
 
 		sr = new ShapeRenderer();
 		
-		life = new Texture("Original_PacMan_RIGHT.png");
+		life = new Texture("Original_PacMan_RIGHT1.png");
 		
 		
 
@@ -110,20 +112,8 @@ public class MyGdxGame extends ApplicationAdapter {
             batch.draw(backgroundTexture,0,0);
 
             state = p.state();
+            pac=p.pac_pic();
 
-            if(state .equals("RIGHT")) {
-                pac = new Texture("Original_PacMan_RIGHT.png");
-            }
-            if(state .equals("LEFT")) {
-                pac = new Texture("Original_PacMan.png");
-            }
-            if(state .equals("DOWN")) {
-                pac = new Texture("Original_PacMan_DOWN.png");
-            }
-            if(state .equals("UP")) {
-                pac = new Texture("Original_PacMan_UP.png");
-            }
-            
             movement();//moves player and ghosts
             
             drawO();
@@ -151,25 +141,31 @@ public class MyGdxGame extends ApplicationAdapter {
         batch.end();
 
         if(!start){
-            sr.begin(ShapeType.Filled);
-            sr.setColor(1,1,1,0);
-            ArrayList<int[]>drawDots = p.drawing(2);
 
+            ArrayList<int[]>drawDots = p.drawing(2);
+            batch.begin();
             for(int i = 0; i < drawDots.size(); i++){
-                sr.rect(drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12,4,4);
+                batch.draw(dot,drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12);
+   //             sr.rect(drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12,4,4);
             }
+
 
             drawDots = p.drawing(3);
-
+           // sr.begin(ShapeType.Filled);
+            //sr.setColor(1,1,1,0);
             for(int i = 0; i < drawDots.size(); i++){
-                sr.rect(drawDots.get(i)[0]*24+6,drawDots.get(i)[1]*24+6,12,12);
+                batch.draw(big_dot,drawDots.get(i)[0]*24+8,drawDots.get(i)[1]*24+8);
+                //sr.rect(drawDots.get(i)[0]*24+6,drawDots.get(i)[1]*24+6,12,12);
             }
+            batch.end();
 
-
-            sr.end();
+            //sr.end();
         }
 
     }
+
+
+
     public void starting_menu(){
         batch.draw(Main_Menu,0,0);
         batch.draw(play_btn,224,371);
@@ -204,7 +200,18 @@ public class MyGdxGame extends ApplicationAdapter {
     }
     
     public void timer(){
-
+        if(blue.data_send() && blue.scared_send()){
+            p.points_add(100);
+        }
+        if(red.data_send() && red.scared_send()){
+            p.points_add(100);
+        }
+        if(pink.data_send() && pink.scared_send()){
+            p.points_add(100);
+        }
+        if(orange.data_send() && orange.scared_send()){
+            p.points_add(100);
+        }
         String points = "SCORE: "+p.grub()[0];
         font.draw(batch, points, 0,788);
         t.stop();
@@ -217,9 +224,11 @@ public class MyGdxGame extends ApplicationAdapter {
     }
     
     public void drawO(){//drawing ghost positions
-        for(int i = 0; i < 4; i++){
-            batch.draw(redG,pos[i][0],pos[i][1]);
-        }
+        batch.draw(red.ghost_pic(),pos[0][0],pos[0][1]);
+        batch.draw(blue.ghost_pic(),pos[1][0],pos[1][1]);
+        batch.draw(pink.ghost_pic(),pos[2][0],pos[2][1]);
+        batch.draw(orange.ghost_pic(),pos[3][0],pos[3][1]);
+
     }
     public void scared(){
         if(p.bigDot()){

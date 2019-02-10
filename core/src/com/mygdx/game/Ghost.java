@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.graphics.Texture;
+
 import java.util.ArrayList;
 
 
@@ -14,7 +16,8 @@ public class Ghost {
     private boolean scared = false;
     private boolean eaten = false;
     private int movement = 2;//how much a ghost changes position
-    
+    private int animation_count=0;
+    private int frame=1;
     Timer t = new Timer();
     
     
@@ -53,7 +56,27 @@ public class Ghost {
     public Ghost(String color){
         
         this.color = color;
+    }
 
+    public Texture ghost_pic(){
+        if(animation_count==20){
+            if(frame==1){
+                frame=2;
+            }
+            else{
+                frame=1;
+            }
+            animation_count=0;
+        }
+        animation_count+=1;
+        Texture pic = new Texture(state+color+frame+".png");
+        if(scared){
+            pic=new Texture("scaredy_ghost.png");
+        }
+        if(eaten){
+            pic=new Texture("eaten_face.png");
+        }
+        return pic;
     }
     
     public int[] move(int PacX,int PacY){
@@ -240,12 +263,30 @@ public class Ghost {
         scared = true;
         t = new Timer();
     }
+    public boolean data_send(){
+        boolean out;
+        if(x/24 == PacX/24 && y/24 == PacY/24){
+            out=true;
+        }
+        else {
+            out=false;
+        }
+        return out;
+    }
+    public boolean scared_send(){
+        return scared;
+    }
 
     
     public void isEaten(){
-        if(x/24 == PacX/24 && y/24 == PacY/24 && scared){
-            eaten = true;
+        if(!eaten){
+            if(x/24 == PacX/24 && y/24 == PacY/24 && scared){
+                eaten = true;
+
+                System.out.println("wowow");
+            }
         }
+
     }
     public int[] middle(){//when pacman eats a ghost while they're scared
         state = shortestPath(1,1);
@@ -254,13 +295,13 @@ public class Ghost {
         int Ay = y / 24;
         
         if (state.equals("right")) {
-            x += movement*5;
+            x += movement*2;
         } else if (state.equals("left")) {
-            x -= movement*5;
+            x -= movement*2;
         } else if (state.equals("up")) {
-            y += movement*5;
+            y += movement*2;
         } else if (state.equals("down")) {
-            y -= movement*5;
+            y -= movement*2;
         }
         if (x <= 24) {//allows for side teleportation 
             x = 647;
@@ -279,5 +320,8 @@ public class Ghost {
     public boolean touchPac(){//checking if ghost touched pacman
         boolean touch = (x/24 == PacX/24 && y/24 == PacY/24 && !scared);
         return touch;
+    }
+    public boolean eaten_check(){
+        return eaten;
     }
 }
