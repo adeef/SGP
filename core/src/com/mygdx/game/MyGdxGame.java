@@ -128,10 +128,6 @@ public class MyGdxGame extends ApplicationAdapter {
                 if(ghosts[i].touchPac()){
                     lives -=1;
                     reset();
-                    try{
-                        Thread.sleep(2000);
-                    }
-                    catch (Exception e){}
                     break;
                 }
             }
@@ -192,7 +188,6 @@ public class MyGdxGame extends ApplicationAdapter {
         ghosts[1] = blue;
         ghosts[2] = pink;
         ghosts[3] = orange;
-
         
 
         Px = p.move()[0];
@@ -205,15 +200,18 @@ public class MyGdxGame extends ApplicationAdapter {
     }
     
     public void timer(){
-        
-        for(int i = 0; i < 4; i++){
-            if(ghosts[i].canGive){
-                p.points_add(200);
-                ghosts[i].canGive = false;
-            }
+        if(blue.data_send() && blue.scared_send()){
+            p.points_add(100);
         }
-        
-
+        if(red.data_send() && red.scared_send()){
+            p.points_add(100);
+        }
+        if(pink.data_send() && pink.scared_send()){
+            p.points_add(100);
+        }
+        if(orange.data_send() && orange.scared_send()){
+            p.points_add(100);
+        }
         String points = "SCORE: "+p.grub()[0];
         font.draw(batch, points, 0,788);
         t.stop();
@@ -227,10 +225,9 @@ public class MyGdxGame extends ApplicationAdapter {
     
     public void drawO(){//drawing ghost positions
         batch.draw(red.ghost_pic(),pos[0][0],pos[0][1]);
+        batch.draw(blue.ghost_pic(),pos[1][0],pos[1][1]);
         batch.draw(pink.ghost_pic(),pos[2][0],pos[2][1]);
         batch.draw(orange.ghost_pic(),pos[3][0],pos[3][1]);
-        batch.draw(blue.ghost_pic(),pos[1][0],pos[1][1]);
-
 
     }
     public void scared(){
