@@ -20,6 +20,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	Texture pac;
 	Texture Main_Menu;
 	Texture you_win;
+	Texture you_lose;
 	Texture play_btn;
 	Texture play_btn_hover;
 	Texture backgroundTexture;
@@ -39,8 +40,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	boolean start=true;
 
 	int backg_animation_count;
-	int total_backg_animation_count;
-	
+
+    int total_backg_animation_count=0;
 	int Rx = 0;//red ghost coords
 	int Ry = 0;
 	
@@ -78,7 +79,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void create () {
 		Gdx.graphics.setWindowedMode(672, 800);
 		backg_animation_count=0;
-		total_backg_animation_count=0;
+
 		batch = new SpriteBatch();
 		backgroundTexture = new Texture("fullLevel.png");
 		backgroundTexture_win= new Texture("fullLevel_winner.png");
@@ -92,6 +93,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		font = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
 		time = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
         you_win = new Texture("you_win.png");
+        you_lose= new Texture("you_lose.png");
 		sr = new ShapeRenderer();
 		
 		life = new Texture("Original_PacMan_RIGHT1.png");
@@ -169,7 +171,7 @@ public class MyGdxGame extends ApplicationAdapter {
                     batch.draw(you_win,186,400);
                 }
                 if(lives==0){
-
+                  batch.draw(you_lose,186,400);
 
                 }
 
@@ -191,7 +193,9 @@ public class MyGdxGame extends ApplicationAdapter {
             else {
                 state = p.state();
                 pac=p.pac_pic();
-                if(!p.winner()){
+                System.out.println(lives);
+                System.out.println(total_backg_animation_count+"TTTTTTTTTTT");
+                if(p.winner()!=true && lives!=0){
                     movement();//moves player and ghosts
 
                 }
@@ -206,10 +210,12 @@ public class MyGdxGame extends ApplicationAdapter {
                 batch.draw(pac, Px, Py);
 
                 for(int i = 0; i < 4; i++){
-                    if(ghosts[i].touchPac()){
-                        lives -=1;
-                        reset();
-                        break;
+                    if(lives>=1){
+                        if(ghosts[i].touchPac()){
+                            lives -=1;
+                            reset();
+                            break;
+                        }
                     }
                 }
 
@@ -223,22 +229,26 @@ public class MyGdxGame extends ApplicationAdapter {
 
             if(!start){
 
-                ArrayList<int[]>drawDots = p.drawing(2);
 
-                for(int i = 0; i < drawDots.size(); i++){
-                    batch.draw(dot,drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12);
-                    //             sr.rect(drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12,4,4);
+                if(total_backg_animation_count<121){
+                    ArrayList<int[]>drawDots = p.drawing(2);
+                    for(int i = 0; i < drawDots.size(); i++){
+                        batch.draw(dot,drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12);
+                        //             sr.rect(drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12,4,4);
+                    }
+
+
+                    drawDots = p.drawing(3);
+
+                    // sr.begin(ShapeType.Filled);
+                    //sr.setColor(1,1,1,0);
+                    for(int i = 0; i < drawDots.size(); i++){
+                        batch.draw(big_dot,drawDots.get(i)[0]*24+8,drawDots.get(i)[1]*24+8);
+                        //sr.rect(drawDots.get(i)[0]*24+6,drawDots.get(i)[1]*24+6,12,12);
+                    }
+
                 }
 
-
-                drawDots = p.drawing(3);
-
-                // sr.begin(ShapeType.Filled);
-                //sr.setColor(1,1,1,0);
-                for(int i = 0; i < drawDots.size(); i++){
-                    batch.draw(big_dot,drawDots.get(i)[0]*24+8,drawDots.get(i)[1]*24+8);
-                    //sr.rect(drawDots.get(i)[0]*24+6,drawDots.get(i)[1]*24+6,12,12);
-                }
 
 
                 //sr.end();
