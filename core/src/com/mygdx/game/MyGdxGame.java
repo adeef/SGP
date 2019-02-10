@@ -23,6 +23,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	Texture play_btn_hover;
 	Texture backgroundTexture;
 	BitmapFont font;
+	Texture life;
 	
 	BitmapFont time;
 	
@@ -48,11 +49,16 @@ public class MyGdxGame extends ApplicationAdapter {
     int Piy = 0;
 
     int[][] pos = {{Rx,Ry},{Bx,By},{Pix,Piy},{Ox,Oy}};
+    
+    int lives = 3;
 
     Ghost red = new Ghost("red");
     Ghost blue = new Ghost("blue");
 	Ghost pink = new Ghost("pink");
 	Ghost orange = new Ghost("orange");
+
+    Ghost[] ghosts = new Ghost[4];
+
 	
 	String state = "RIGHT";//pacmans state
 	Pacman p = new Pacman();
@@ -80,23 +86,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		time = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
 
 		sr = new ShapeRenderer();
+		
+		life = new Texture("Original_PacMan_RIGHT.png");
+		
+		
 
 	}
 
-	public void starting_menu(){
-	    batch.draw(Main_Menu,0,0);
-	    batch.draw(play_btn,224,371);
-        int mx=Gdx.input.getX();
-        int my=Gdx.input.getY();
-        System.out.println("X:"+mx+" Y:"+my);
-        if(mx>=224 && mx<=449 && my>=371 && my<=429){
-            batch.draw(play_btn_hover,224,371);
-            if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-                start=false;
-                t = new Timer();
-            }
-        }
-    }
+
 
 	@Override
 	public void render () {
@@ -105,16 +102,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         if(start){
-
             starting_menu();
         }
+        
         else{
-
 
             batch.draw(backgroundTexture,0,0);
 
             state = p.state();
-
 
             if(state .equals("RIGHT")) {
                 pac = new Texture("Original_PacMan_RIGHT.png");
@@ -133,14 +128,27 @@ public class MyGdxGame extends ApplicationAdapter {
             
             drawO();
 
+            scared();
+
             timer();
             
             batch.draw(pac, Px, Py);
+            
+            for(int i = 0; i < 4; i++){
+                if(ghosts[i].touchPac()){
+                    lives -=1;
+                    reset();
+                    break;
+                }
+            }
 
+            
+            
+            for(int i = 0; i <lives; i++){
+                batch.draw(life,500+i*35,760);
+            }
         }
         batch.end();
-
-
 
         if(!start){
             sr.begin(ShapeType.Filled);
@@ -162,8 +170,24 @@ public class MyGdxGame extends ApplicationAdapter {
         }
 
     }
+    public void starting_menu(){
+        batch.draw(Main_Menu,0,0);
+        batch.draw(play_btn,224,371);
+        
+        int mx=Gdx.input.getX();
+        int my=Gdx.input.getY();
+        System.out.println("X:"+mx+" Y:"+my);
+        
+        if(mx>=224 && mx<=449 && my>=371 && my<=429){
+            batch.draw(play_btn_hover,224,371);
+            if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+                start=false;
+                t = new Timer();
+            }
+        }
+    }
+    
     public void movement(){
-        Ghost[] ghosts = new Ghost[4];
         ghosts[0] = red;
         ghosts[1] = blue;
         ghosts[2] = pink;
@@ -180,10 +204,13 @@ public class MyGdxGame extends ApplicationAdapter {
     }
     
     public void timer(){
+
         String points = "SCORE: "+p.grub()[0];
         font.draw(batch, points, 0,788);
         t.stop();
+        
         int secs = (int)t.getElapsedTimeSecs();
+        
         String time_display= t.time_converter(secs);
         String elap = "TIME: "+time_display;
         time.draw(batch,elap,250,788);
@@ -193,6 +220,26 @@ public class MyGdxGame extends ApplicationAdapter {
         for(int i = 0; i < 4; i++){
             batch.draw(redG,pos[i][0],pos[i][1]);
         }
+    }
+    public void scared(){
+        if(p.bigDot()){
+            for(int i = 0; i <4; i++){
+                ghosts[i].beScared();
+            }
+        }
+    }
+    public void reset(){
+        red = new Ghost("red");
+        blue = new Ghost("blue");
+        pink = new Ghost("pink");
+        orange = new Ghost("orange");
+
+        ghosts = new Ghost[4];
+
+
+        p.reset();
+        
+        
     }
 
 	@Override

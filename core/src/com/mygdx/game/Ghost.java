@@ -4,14 +4,18 @@ import java.util.ArrayList;
 
 
 public class Ghost {
-    private int x = 48;
-    private int y = 24;
+    private int x = 17*24;
+    private int y = 13*24;
     private String state = "right";
     private int prevAx;
     private int prevAy;
     private int PacX;
     private int PacY;
     private boolean scared = false;
+    private boolean eaten = false;
+    private int movement = 2;//how much a ghost changes position
+    
+    Timer t = new Timer();
     
     
     private String color;
@@ -27,12 +31,12 @@ public class Ghost {
             {4, 2, 4, 4, 4, 4, 4, 2, 4, 4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 0, 4, 2, 4},
             {4, 2, 4, 4, 6, 2, 2, 6, 4, 4, 6, 0, 0, 6, 0, 0, 6, 0, 0, 6, 4, 4, 6, 2, 2, 6, 4, 0, 4, 2, 4},
             {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 2, 4, 4, 2, 4, 0, 4, 2, 4},
-            {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 0, 0, 0, 4, 0, 4, 4, 2, 4, 4, 2, 4, 4, 4, 2, 4},
-            {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 4, 0, 4, 0, 0, 0, 4, 6, 0, 0, 6, 4, 4, 6, 2, 2, 2, 6, 4},
-            {4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 0, 0, 0, 5, 0, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4},
-            {4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 0, 0, 0, 5, 0, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4},
-            {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 4, 0, 4, 0, 0, 0, 4, 6, 0, 0, 6, 4, 4, 6, 2, 2, 2, 6, 4},
-            {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 0, 0, 0, 4, 0, 4, 4, 2, 4, 4, 2, 4, 4, 4, 2, 4},
+            {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 2, 4, 4, 2, 4, 4, 4, 2, 4},
+            {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 4, 0, 4, 4, 4, 4, 4, 6, 0, 0, 6, 4, 4, 6, 2, 2, 2, 6, 4},
+            {4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4},
+            {4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 4, 0, 6, 0, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4},
+            {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 4, 0, 4, 4, 4, 4, 4, 6, 0, 0, 6, 4, 4, 6, 2, 2, 2, 6, 4},
+            {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 2, 4, 4, 2, 4, 4, 4, 2, 4},
             {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 2, 4, 4, 2, 4, 0, 4, 2, 4},
             {4, 2, 4, 4, 6, 2, 2, 6, 4, 4, 6, 0, 0, 6, 0, 0, 6, 0, 0, 6, 4, 4, 6, 2, 2, 6, 4, 0, 4, 2, 4},
             {4, 2, 4, 4, 4, 4, 4, 2, 4, 4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 0, 4, 2, 4},
@@ -49,12 +53,29 @@ public class Ghost {
     public Ghost(String color){
         
         this.color = color;
-        if(color .equals("blue")){
-            x = 336;
-        }
+
     }
     
     public int[] move(int PacX,int PacY){
+        isEaten();
+        
+        if(eaten && x/24 == 1 && y/24 == 1){
+            scared = false;
+            eaten = false;
+        }
+        if(eaten){
+            return middle();
+        }
+        t.stop();
+        if(scared && (int)t.getElapsedTimeSecs() > 10){
+            scared = false;
+        }
+        if(scared){
+            movement = 1;
+        }
+        else{
+            movement = 2;
+        }
         this.PacX = PacX;
         this.PacY = PacY;
         if(color.equals("blue")){
@@ -62,16 +83,16 @@ public class Ghost {
             int Ax = x / 24;
             int Ay = y / 24;
             
-            state = shortestPath();//calculate shortest path
+            state = shortestPath(PacX/24,PacY/24);//calculate shortest path
             
             if (state.equals("right")) {
-                x += 2;
+                x += movement;
             } else if (state.equals("left")) {
-                x -= 2;
+                x -= movement;
             } else if (state.equals("up")) {
-                y += 2;
+                y += movement;
             } else if (state.equals("down")) {
-                y -= 2;
+                y -= movement;
             }
             if (x <= 24) {//allows for side teleportation 
                 x = 647;
@@ -99,13 +120,13 @@ public class Ghost {
 
 
         if (state.equals("right")) {
-            x += 2;
+            x += movement;
         } else if (state.equals("left")) {
-            x -= 2;
+            x -= movement;
         } else if (state.equals("up")) {
-            y += 2;
+            y += movement;
         } else if (state.equals("down")) {
-            y -= 2;
+            y -= movement;
         }
         if (x <= 24) {
             x = 647;
@@ -123,7 +144,7 @@ public class Ghost {
         
     }
 
-    private String shortestPath() {
+    private String shortestPath(int x2, int y2) {
         ArrayList<String> possible = PosChoice();
         double dist = Double.POSITIVE_INFINITY;//value of shortest path in possible
         String path = "";//direction ghost will move in
@@ -133,7 +154,7 @@ public class Ghost {
             int Ax = x/24;
             int Ay = y/24;
             if(possible.get(i).equals("right")){
-                double d = Math.pow((Ax + 1) - (PacX/24),2)+Math.pow(Ay - PacY/24,2);//finding distance between ghost and pacman
+                double d = Math.pow((Ax + 1) - (x2),2)+Math.pow(Ay - y2,2);//finding distance between ghost and pacman
                 d = Math.pow(d,0.5);
                 if(d< dist){
                     dist = d;
@@ -141,7 +162,7 @@ public class Ghost {
                 }
             }
             if(possible.get(i).equals("left")){
-                double d = Math.pow((Ax - 1) - (PacX/24),2)+Math.pow(Ay - PacY/24,2);
+                double d = Math.pow((Ax - 1) - (x2),2)+Math.pow(Ay - y2,2);
                 d = Math.pow(d,0.5);
                 if(d< dist){
                     dist = d;
@@ -150,7 +171,7 @@ public class Ghost {
                 }
             }
             if(possible.get(i).equals("down")){
-                double d = Math.pow((Ax) - (PacX/24),2)+Math.pow(Ay-1 - PacY/24,2);
+                double d = Math.pow((Ax) - (x2),2)+Math.pow(Ay-1 - y2,2);
                 d = Math.pow(d,0.5);
                 if(d< dist){
                     dist = d;
@@ -159,7 +180,7 @@ public class Ghost {
                 }
             }
             if(possible.get(i).equals("up")){
-                double d = Math.pow((Ax) - (PacX/24),2)+Math.pow(Ay+1 - PacY/24,2);
+                double d = Math.pow((Ax) - (x2),2)+Math.pow(Ay+1 - y2,2);
                 d = Math.pow(d,0.5);
                 if(d< dist){
                     dist = d;
@@ -214,5 +235,49 @@ public class Ghost {
         
 
         return choices;
+    }
+    public void beScared(){
+        scared = true;
+        t = new Timer();
+    }
+
+    
+    public void isEaten(){
+        if(x/24 == PacX/24 && y/24 == PacY/24 && scared){
+            eaten = true;
+        }
+    }
+    public int[] middle(){//when pacman eats a ghost while they're scared
+        state = shortestPath(1,1);
+        int[] pos = new int[2];
+        int Ax = x / 24;
+        int Ay = y / 24;
+        
+        if (state.equals("right")) {
+            x += movement*5;
+        } else if (state.equals("left")) {
+            x -= movement*5;
+        } else if (state.equals("up")) {
+            y += movement*5;
+        } else if (state.equals("down")) {
+            y -= movement*5;
+        }
+        if (x <= 24) {//allows for side teleportation 
+            x = 647;
+        }
+        if (x >= 648) {
+            x = 24;
+        }
+
+        prevAx = Ax;
+        prevAy = Ay;
+
+        pos[0] = x / 24 * 24;//rounding position to match a 24x24 box
+        pos[1] = y / 24 * 24;
+        return pos;
+    }
+    public boolean touchPac(){//checking if ghost touched pacman
+        boolean touch = (x/24 == PacX/24 && y/24 == PacY/24 && !scared);
+        return touch;
     }
 }

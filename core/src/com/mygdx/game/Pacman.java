@@ -12,6 +12,7 @@ public class Pacman {
     private static int points;
     private int Ax = x;//position in array
     private int Ay = y;
+
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 5, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
             {4, 2, 2, 2, 2, 4, 4, 3, 2, 2, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 2, 2, 2, 2, 3, 2, 2, 4},
@@ -137,6 +138,7 @@ public class Pacman {
             points+=50;
             level[Ax][Ay] = 0;
         }
+
         int[] r = new int[3];
         r[0] = points;
         r[1] = Ax;
@@ -144,7 +146,12 @@ public class Pacman {
         return r;
         
     }
+    public void reset(){
+        x = 48;
+        y = 24;
+    }
     public boolean bigDot(){
-        return level[x/24][y/24] == 3;
+        boolean eaten = level[x/24][y/24] == 3;
+        return eaten;
     }
 }
