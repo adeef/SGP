@@ -7,20 +7,31 @@ import java.util.ArrayList;
 
 public class Ghost {
     private int x = 13*24;
-    private int y = 19*24;
+    private int y = 16*24;
+
+
     private String state = "right";
     private int prevAx;
     private int prevAy;
     private int PacX;
     private int PacY;
+
     private boolean scared = false;
     private boolean eaten = false;
+
+
     private int movement = 2;//how much a ghost changes position
     private int animation_count=0;
     private int frame=1;
+
+    public boolean canGive = false;
+
     Timer t = new Timer();
-    
-    
+
+
+    private ArrayList<String> shortCuts = new ArrayList<String>();
+
+
     private String color;
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
@@ -37,7 +48,7 @@ public class Ghost {
             {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 2, 4, 4, 2, 4, 4, 4, 2, 4},
             {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 4, 0, 4, 4, 4, 4, 4, 6, 0, 0, 6, 4, 4, 6, 2, 2, 2, 6, 4},
             {4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4},
-            {4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 4, 0, 6, 0, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4},
+            {4, 2, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 4, 0, 4, 6, 4, 4, 4, 4, 4, 2, 4, 4, 4, 4, 4},
             {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 4, 0, 4, 4, 4, 4, 4, 6, 0, 0, 6, 4, 4, 6, 2, 2, 2, 6, 4},
             {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 2, 4, 4, 2, 4, 4, 4, 2, 4},
             {4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 2, 4, 4, 0, 4, 4, 4, 4, 4, 0, 4, 4, 2, 4, 4, 2, 4, 0, 4, 2, 4},
@@ -52,13 +63,10 @@ public class Ghost {
             {4, 6, 2, 2, 6, 4, 4, 6, 2, 2, 6, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 6, 2, 2, 6, 2, 2, 2, 6, 4},
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
     };
-    
+
     public Ghost(String color){
-        
+
         this.color = color;
-        if(color.equals("blue")){
-            x = 15*24;
-        }
     }
 
     public Texture ghost_pic(){
@@ -81,17 +89,18 @@ public class Ghost {
         }
         return pic;
     }
-    
+
     public int[] move(int PacX,int PacY){
         isEaten();
-        
-        if(eaten && x/24 == 1 && y/24 == 1){
+
+        if(eaten && x/24 == 1 && y/24 == 1){//once home is reached
             scared = false;
             eaten = false;
         }
         if(eaten){
             return middle();
         }
+
         t.stop();
         if(scared && (int)t.getElapsedTimeSecs() > 10){
             scared = false;
@@ -104,13 +113,23 @@ public class Ghost {
         }
         this.PacX = PacX;
         this.PacY = PacY;
+
+
         if(color.equals("blue")){
             int[] pos = new int[2];
             int Ax = x / 24;
             int Ay = y / 24;
-            
+
             state = shortestPath(PacX/24,PacY/24);//calculate shortest path
-            
+            //shortP(new ArrayList<String>(),x/24,y/24,PacX/24,PacY/24);
+            //System.out.println(shortCuts);
+
+
+            if(state.equals("")){
+                state = "up";
+            }
+
+
             if (state.equals("right")) {
                 x += movement;
             } else if (state.equals("left")) {
@@ -126,12 +145,14 @@ public class Ghost {
             if (x >= 648) {
                 x = 24;
             }
-            
+
             prevAx = Ax;
             prevAy = Ay;
-            
+
+
             pos[0] = x / 24 * 24;//rounding position to match a 24x24 box
-            pos[1] = y / 24 * 24; 
+            pos[1] = y / 24 * 24;
+
             return pos;
         }
 
@@ -140,7 +161,6 @@ public class Ghost {
         int Ay = y / 24;
 
         if (level[Ax][Ay] == 6 && (Ax != prevAx || Ay != prevAy)) {//checks if ghost is at a junction and new position isnt the old one
-            
             state = PosChoice().get((int)(Math.random()*(PosChoice().size())));//finding possible directions and choosing one
         }
 
@@ -167,15 +187,46 @@ public class Ghost {
         pos[0] = x / 24 * 24;//rounding position to match a 24x24 box
         pos[1] = y / 24 * 24;
         return pos;
-        
+
+    }
+    //recursive path finding - :( did not work
+    private void shortP(ArrayList<String> paths, int x1, int y1, int x2, int y2 ){
+        System.out.println(x1+","+y1);
+        if(x1 == x2 && y1 == y2){
+            if(paths.size() < shortCuts.size()){
+                shortCuts = paths;
+            }
+        }
+
+        ArrayList<String> possible = PosChoice();
+        System.out.println(possible);
+
+        for(int i = 0; i < possible.size(); i++){
+
+            System.out.println(possible.get(i));
+            paths.add(possible.get(i));
+
+            if(possible.get(i).equals("right")){
+                shortP(paths,x1+1,y1,x2,y2);
+            }
+            if(possible.get(i).equals("left")){
+                shortP(paths,x1-1,y1,x2,y2);
+            }
+            if(possible.get(i).equals("up")){
+                shortP(paths,x1,y1+1,x2,y2);
+            }
+            if(possible.get(i).equals("down")){
+                shortP(paths,x1,y1-1,x2,y2);
+            }
+        }
     }
 
-    private String shortestPath(int x2, int y2) {
+    private String shortestPath(int x2, int y2) {//A-star path finding algorithm
         ArrayList<String> possible = PosChoice();
         double dist = Double.POSITIVE_INFINITY;//value of shortest path in possible
         String path = "";//direction ghost will move in
-        
-        
+
+
         for(int i = 0; i < possible.size(); i++){
             int Ax = x/24;
             int Ay = y/24;
@@ -222,7 +273,7 @@ public class Ghost {
         ArrayList<String> choices = new ArrayList<String>();
         int Ax = x/24;
         int Ay = y/24;
-        
+
         if(Ax < 30) {//checking possibilities
             if (level[Ax + 1][Ay] != 4 && level[Ax + 1][Ay] != 5) {
                 choices.add("right");
@@ -243,7 +294,7 @@ public class Ghost {
                 choices.add("down");
             }
         }
-        
+
         if(choices.size() > 1){//avoids going back and forth(removing opposite direction)
             if(state .equals("left")) {
                 choices.remove("right");
@@ -258,7 +309,7 @@ public class Ghost {
                 choices.remove("up");
             }
         }
-        
+
 
         return choices;
     }
@@ -266,45 +317,33 @@ public class Ghost {
         scared = true;
         t = new Timer();
     }
-    public boolean data_send(){
-        boolean out;
-        if(x/24 == PacX/24 && y/24 == PacY/24){
-            out=true;
-        }
-        else {
-            out=false;
-        }
-        return out;
-    }
-    public boolean scared_send(){
-        return scared;
-    }
 
-    
+
     public void isEaten(){
         if(!eaten){
             if(x/24 == PacX/24 && y/24 == PacY/24 && scared){
                 eaten = true;
+                canGive = true;
 
-                System.out.println("wowow");
             }
         }
-
     }
+
+
     public int[] middle(){//when pacman eats a ghost while they're scared
         state = shortestPath(1,1);
         int[] pos = new int[2];
         int Ax = x / 24;
         int Ay = y / 24;
-        
+
         if (state.equals("right")) {
-            x += movement*2;
+            x += movement*5;
         } else if (state.equals("left")) {
-            x -= movement*2;
+            x -= movement*5;
         } else if (state.equals("up")) {
-            y += movement*2;
+            y += movement*5;
         } else if (state.equals("down")) {
-            y -= movement*2;
+            y -= movement*5;
         }
         if (x <= 24) {//allows for side teleportation 
             x = 647;
@@ -316,6 +355,8 @@ public class Ghost {
         prevAx = Ax;
         prevAy = Ay;
 
+
+
         pos[0] = x / 24 * 24;//rounding position to match a 24x24 box
         pos[1] = y / 24 * 24;
         return pos;
@@ -324,7 +365,5 @@ public class Ghost {
         boolean touch = (x/24 == PacX/24 && y/24 == PacY/24 && !scared);
         return touch;
     }
-    public boolean eaten_check(){
-        return eaten;
-    }
+
 }
