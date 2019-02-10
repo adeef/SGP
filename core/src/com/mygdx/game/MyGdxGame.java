@@ -16,33 +16,36 @@ import java.util.*;
 
 public class MyGdxGame extends ApplicationAdapter {
 
-	SpriteBatch batch;
-	Texture pac;
-	Texture Main_Menu;
-	Texture play_btn;
-	Texture play_btn_hover;
-	Texture backgroundTexture;
-	BitmapFont font;
-	Texture life;
-	Texture dot;
-	Texture big_dot;
-	BitmapFont time;
-	
-	ShapeRenderer sr;
-	Texture redG;
+    SpriteBatch batch;
+    Texture pac;
+    Texture Main_Menu;
+    Texture you_win;
+    Texture play_btn;
+    Texture play_btn_hover;
+    Texture backgroundTexture;
+    Texture backgroundTexture_win;
+    BitmapFont font;
+    Texture life;
+    Texture dot;
+    Texture big_dot;
+    BitmapFont time;
 
-	int Px=0;
-	int Py=0;
+    ShapeRenderer sr;
+    Texture redG;
 
-	boolean start=true;
+    int Px=0;
+    int Py=0;
 
-	
-	
-	int Rx = 0;//red ghost coords
-	int Ry = 0;
-	
-	int Bx = 0;//blue ghost coords
-	int By = 0;
+    boolean start=true;
+
+    int backg_animation_count;
+    int total_backg_animation_count;
+
+    int Rx = 0;//red ghost coords
+    int Ry = 0;
+
+    int Bx = 0;//blue ghost coords
+    int By = 0;
 
     int Ox = 0;//orange ghost coords
     int Oy = 0;
@@ -52,18 +55,19 @@ public class MyGdxGame extends ApplicationAdapter {
 
     int[][] pos = {{Rx,Ry},{Bx,By},{Pix,Piy},{Ox,Oy}};
     
-    int lives = 3;
 
+    int lives = 3;
+    String main_time="";
     Ghost red = new Ghost("red");
     Ghost blue = new Ghost("blue");
-	Ghost pink = new Ghost("pink");
-	Ghost orange = new Ghost("orange");
+    Ghost pink = new Ghost("pink");
+    Ghost orange = new Ghost("orange");
 
     Ghost[] ghosts = new Ghost[4];
 
-	
-	String state = "RIGHT";//pacmans state
-	Pacman p = new Pacman();
+
+    String state = "RIGHT";//pacmans state
+    Pacman p = new Pacman();
 
 
     Timer t = new Timer();
@@ -72,95 +76,175 @@ public class MyGdxGame extends ApplicationAdapter {
 
 
     @Override
-	public void create () {
-		Gdx.graphics.setWindowedMode(672, 800);
-		
-		batch = new SpriteBatch();
-		backgroundTexture = new Texture("fullLevel.png");
-		pac = new Texture("Original_PacMan_RIGHT1.png");
-		Main_Menu= new Texture("Main_Menu.png");
-		play_btn=new Texture("Play_button.png");
-		play_btn_hover=new Texture("Play_button_Hover.png");
-		redG = new Texture("redL.png");
-		dot=new Texture("point1.png");
+    public void create () {
+        Gdx.graphics.setWindowedMode(672, 800);
+        backg_animation_count=0;
+        total_backg_animation_count=0;
+        batch = new SpriteBatch();
+        backgroundTexture = new Texture("fullLevel.png");
+        backgroundTexture_win= new Texture("fullLevel_winner.png");
+        pac = new Texture("Original_PacMan_RIGHT1.png");
+        Main_Menu= new Texture("Main_Menu.png");
+        play_btn=new Texture("Play_button.png");
+        play_btn_hover=new Texture("Play_button_Hover.png");
+        redG = new Texture("redL.png");
+        dot=new Texture("point1.png");
         big_dot=new Texture("big_point1.png");
-		font = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
-		time = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
+        font = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
+        time = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
+        you_win = new Texture("you_win.png");
+        sr = new ShapeRenderer();
 
-		sr = new ShapeRenderer();
-		
-		life = new Texture("Original_PacMan_RIGHT1.png");
-		
-		
-
-	}
+        life = new Texture("Original_PacMan_RIGHT1.png");
 
 
 
-	@Override
-	public void render () {
+    }
 
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    public void total_reset(){
+        Px=0;
+        Py=0;
+
+        backg_animation_count=0;
+        total_backg_animation_count=0;
+
+        Rx = 0;//red ghost coords
+        Ry = 0;
+
+        Bx = 0;//blue ghost coords
+        By = 0;
+
+        Ox = 0;//orange ghost coords
+        Oy = 0;
+
+        Pix = 0;//pink ghost coords
+        Piy = 0;
+        lives = 3;
+        String main_time="";
+        red = new Ghost("red");
+        blue = new Ghost("blue");
+        pink = new Ghost("pink");
+        orange = new Ghost("orange");
+
+        ghosts = new Ghost[4];
+
+
+        state = "RIGHT";//pacmans state
+        p.points_reset();
+        p = new Pacman();
+        
+
+
+        t = new Timer();
+
+
+
+    }
+
+
+    @Override
+    public void render () {
+        
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         if(start){
             starting_menu();
         }
-        
+
         else{
 
             batch.draw(backgroundTexture,0,0);
+            if((p.winner() || lives==0) && total_backg_animation_count<=120){
 
-            state = p.state();
-            pac=p.pac_pic();
+                if(backg_animation_count>=12){
+                    batch.draw(backgroundTexture_win,0,0);
+                }
+                if(backg_animation_count>=24){
+                    backg_animation_count=0;
+                }
+                backg_animation_count+=1;
+                total_backg_animation_count+=1;
+            }
+            if(total_backg_animation_count==121){
+                batch.draw(Main_Menu,0,0);
+                if(p.winner()){
+                    batch.draw(you_win,186,400);
+                }
+                if(lives==0){
 
-            movement();//moves player and ghosts
-            
-            drawO();
 
-            scared();
+                }
 
-            timer();
-            
-            batch.draw(pac, Px, Py);
-            
-            for(int i = 0; i < 4; i++){
-                if(ghosts[i].touchPac()){
-                    lives -=1;
-                    reset();
-                    break;
+                batch.draw(play_btn,224,240);
+                int mx = Gdx.input.getX();
+                int my = Gdx.input.getY();
+
+                if(mx>=224 && mx<=449 && my>=502 && my<=560){
+                    batch.draw(play_btn_hover,224,240);
+                    if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+                        System.out.println("IT RESET HEREEEE");
+                        total_reset();
+
+                    }
+                }
+
+
+            }
+            else {
+
+                state = p.state();
+                pac=p.pac_pic();
+                if(!p.winner()){
+                    movement();//moves player and ghosts
+
+                }
+
+                drawO();
+
+                scared();
+
+                timer();
+
+
+                batch.draw(pac, Px, Py);
+
+                for(int i = 0; i < 4; i++){
+                    if(ghosts[i].touchPac()){
+                        lives -=1;
+                        reset();
+                        break;
+                    }
+                }
+
+                for(int i = 0; i <lives; i++){
+                    batch.draw(life,500+i*35,760);
                 }
             }
+            
+            if(!start){
 
-            
-            
-            for(int i = 0; i <lives; i++){
-                batch.draw(life,500+i*35,760);
+                ArrayList<int[]>drawDots = p.drawing(2);
+
+                for(int i = 0; i < drawDots.size(); i++){
+                    batch.draw(dot,drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12);
+                    //             sr.rect(drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12,4,4);
+                }
+                
+                drawDots = p.drawing(3);
+
+                // sr.begin(ShapeType.Filled);
+                //sr.setColor(1,1,1,0);
+                for(int i = 0; i < drawDots.size(); i++){
+                    batch.draw(big_dot,drawDots.get(i)[0]*24+8,drawDots.get(i)[1]*24+8);
+                    //sr.rect(drawDots.get(i)[0]*24+6,drawDots.get(i)[1]*24+6,12,12);
+                }
+
+
+                //sr.end();
             }
         }
         batch.end();
-
-        if(!start){
-
-            ArrayList<int[]>drawDots = p.drawing(2);
-            batch.begin();
-            for(int i = 0; i < drawDots.size(); i++){
-                batch.draw(dot,drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12);
-   //             sr.rect(drawDots.get(i)[0]*24+12,drawDots.get(i)[1]*24+12,4,4);
-            }
-
-
-            drawDots = p.drawing(3);
-           // sr.begin(ShapeType.Filled);
-            //sr.setColor(1,1,1,0);
-            for(int i = 0; i < drawDots.size(); i++){
-                batch.draw(big_dot,drawDots.get(i)[0]*24+8,drawDots.get(i)[1]*24+8);
-                //sr.rect(drawDots.get(i)[0]*24+6,drawDots.get(i)[1]*24+6,12,12);
-            }
-            batch.end();
-
-            //sr.end();
-        }
 
     }
 
@@ -169,11 +253,10 @@ public class MyGdxGame extends ApplicationAdapter {
     public void starting_menu(){
         batch.draw(Main_Menu,0,0);
         batch.draw(play_btn,224,371);
-        
+
         int mx=Gdx.input.getX();
         int my=Gdx.input.getY();
-        System.out.println("X:"+mx+" Y:"+my);
-        
+
         if(mx>=224 && mx<=449 && my>=371 && my<=429){
             batch.draw(play_btn_hover,224,371);
             if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
@@ -182,23 +265,23 @@ public class MyGdxGame extends ApplicationAdapter {
             }
         }
     }
-    
+
     public void movement(){
         ghosts[0] = red;
         ghosts[1] = blue;
         ghosts[2] = pink;
         ghosts[3] = orange;
-        
+
 
         Px = p.move()[0];
         Py = p.move()[1];
-        
+
         for(int i = 0; i < ghosts.length; i++){
             pos[i][0] = ghosts[i].move(Px,Py)[0];
             pos[i][1] = ghosts[i].move(Px,Py)[1];
         }
     }
-    
+
     public void timer(){
         if(blue.data_send() && blue.scared_send()){
             p.points_add(100);
@@ -215,14 +298,22 @@ public class MyGdxGame extends ApplicationAdapter {
         String points = "SCORE: "+p.grub()[0];
         font.draw(batch, points, 0,788);
         t.stop();
-        
+
         int secs = (int)t.getElapsedTimeSecs();
-        
+        if(p.winner() && main_time.length()==0){
+            main_time = t.time_converter(secs);
+        }
         String time_display= t.time_converter(secs);
+        if(p.winner()){
+            time_display=main_time;
+        }
         String elap = "TIME: "+time_display;
         time.draw(batch,elap,250,788);
     }
-    
+
+
+
+
     public void drawO(){//drawing ghost positions
         batch.draw(red.ghost_pic(),pos[0][0],pos[0][1]);
         batch.draw(blue.ghost_pic(),pos[1][0],pos[1][1]);
@@ -244,18 +335,20 @@ public class MyGdxGame extends ApplicationAdapter {
         orange = new Ghost("orange");
 
         ghosts = new Ghost[4];
+        
+        p.keyHit = false;
 
 
         p.reset();
-        
-        
+
+
     }
 
-	@Override
-	public void dispose () {
-		batch.dispose();
-		pac.dispose();
-		font.dispose();
-		sr.dispose();
-	}
+    @Override
+    public void dispose () {
+        batch.dispose();
+        pac.dispose();
+        font.dispose();
+        sr.dispose();
+    }
 }

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 
 public class Ghost {
-    private int x = 17*24;
-    private int y = 13*24;
+    private int x = 13*24;
+    private int y = 19*24;
     private String state = "right";
     private int prevAx;
     private int prevAy;
@@ -56,6 +56,9 @@ public class Ghost {
     public Ghost(String color){
         
         this.color = color;
+        if(color.equals("blue")){
+            x = 15*24;
+        }
     }
 
     public Texture ghost_pic(){

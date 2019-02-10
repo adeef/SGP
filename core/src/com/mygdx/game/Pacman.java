@@ -8,14 +8,16 @@ import java.util.*;
 
 public class Pacman {
 
-    private static int x = 2*24;
-    private static int y = 1*24;
+    private static int x = 13*24;
+    private static int y = 13*24;
     private static String state = "RIGHT";
     private static int points;
     private int Ax = x;//position in array
     private int Ay = y;
     private int animation_count=0;
     int frame=1;
+    
+    public boolean keyHit = false;
 
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 5, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
@@ -47,6 +49,7 @@ public class Pacman {
             {4, 2, 2, 2, 2, 4, 4, 3, 2, 2, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 2, 2, 2, 2, 3, 2, 2, 4},
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
     };
+
 
     public int[] move() {
         int[] pos = new int[2];//stores x,y
@@ -101,6 +104,20 @@ public class Pacman {
     public String state(){
         
         return state;
+    }
+    public void key(){
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            keyHit = true;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            keyHit = true;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            keyHit = true;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            keyHit = true;
+        }
     }
     public ArrayList<int[]> drawing(int check){//drawing dots
         ArrayList<int[]> dots = new ArrayList<int[]>();
