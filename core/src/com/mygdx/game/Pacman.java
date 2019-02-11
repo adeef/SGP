@@ -2,21 +2,32 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.*;
 
 public class Pacman {
 
-    private static int x = 2*24;
-    private static int y = 1*24;
+    private static int x = 13*24;
+    private static int y = 13*24;
     private static String state = "RIGHT";
     private static int points;
     private int Ax = x;//position in array
     private int Ay = y;
     private int animation_count=0;
     int frame=1;
+    Music munch;
 
+    public boolean keyHit = false;
+    public void munch_sound(){
+        munch = Gdx.audio.newMusic(Gdx.files.internal("pac_munch.wav"));
+        munch.setVolume(0.1f);
+        if(!munch.isPlaying()){
+            munch.play();
+        }
+
+    }
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 5, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
             {4, 2, 2, 2, 2, 4, 4, 3, 2, 2, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 2, 2, 2, 2, 3, 2, 2, 4},
@@ -48,6 +59,7 @@ public class Pacman {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}
     };
 
+
     public int[] move() {
         int[] pos = new int[2];//stores x,y
         Ax = x/24;
@@ -71,7 +83,7 @@ public class Pacman {
             state = "DOWN";
 
         }
-        
+
         if(state.equals("RIGHT") && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ){
             x+=3;
         }
@@ -94,13 +106,27 @@ public class Pacman {
         pos[0] = Ax*24;
         pos[1] = Ay*24;
 
-        
+
         return pos;
     }
-    
+
     public String state(){
-        
+
         return state;
+    }
+    public void key(){
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            keyHit = true;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            keyHit = true;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            keyHit = true;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            keyHit = true;
+        }
     }
     public ArrayList<int[]> drawing(int check){//drawing dots
         ArrayList<int[]> dots = new ArrayList<int[]>();
@@ -127,19 +153,20 @@ public class Pacman {
         }
         return true;
     }
-    
+
     public int[] grub(){//if pacman is over a dot, he eats it and points are added
         Ax = x/24;
         Ay = y/24;
-        
+
         if(level[Ax][Ay] == 2){
             points+=10;
-            
+            munch_sound();
             level[Ax][Ay] = 0;
-            
+
         }
         if(level[Ax][Ay] == 3){
             points+=50;
+            munch_sound();
             level[Ax][Ay] = 0;
         }
 
@@ -167,7 +194,20 @@ public class Pacman {
         boolean eaten = level[x/24][y/24] == 3;
         return eaten;
     }
+    public boolean pac_munched(){
+        boolean out;
+        if(level[Ax][Ay] == 2){
+            out=true;
+        }
+        else if(level[Ax][Ay] == 3){
+            out=true;
+        }
+        else {
+            out=false;
+        }
 
+        return out;
+    }
     public Texture pac_pic(){
         if(animation_count==10){
             if(frame==1){

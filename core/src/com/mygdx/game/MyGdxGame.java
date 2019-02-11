@@ -3,6 +3,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,37 +18,40 @@ import java.util.*;
 
 public class MyGdxGame extends ApplicationAdapter {
 
-	SpriteBatch batch;
-	Texture pac;
-	Texture Main_Menu;
-	Texture you_win;
-	Texture you_lose;
-	Texture play_btn;
-	Texture play_btn_hover;
-	Texture backgroundTexture;
-	Texture backgroundTexture_win;
-	BitmapFont font;
-	Texture life;
-	Texture dot;
-	Texture big_dot;
-	BitmapFont time;
-	
-	ShapeRenderer sr;
-	Texture redG;
+    SpriteBatch batch;
+    Texture pac;
+    Texture Main_Menu;
+    Texture you_win;
+    Texture you_lose;
+    Texture play_btn;
+    Texture play_btn_hover;
+    Texture backgroundTexture;
+    Texture backgroundTexture_win;
+    BitmapFont font;
+    Texture life;
+    Texture dot;
+    Texture big_dot;
+    BitmapFont time;
+    Sound intro;
+    Sound siren;
 
-	int Px=0;
-	int Py=0;
 
-	boolean start=true;
+    ShapeRenderer sr;
+    Texture redG;
 
-	int backg_animation_count;
+    int Px=0;
+    int Py=0;
+
+    boolean start=true;
+
+    int backg_animation_count;
 
     int total_backg_animation_count=0;
-	int Rx = 0;//red ghost coords
-	int Ry = 0;
-	
-	int Bx = 0;//blue ghost coords
-	int By = 0;
+    int Rx = 0;//red ghost coords
+    int Ry = 0;
+
+    int Bx = 0;//blue ghost coords
+    int By = 0;
 
     int Ox = 0;//orange ghost coords
     int Oy = 0;
@@ -55,19 +60,19 @@ public class MyGdxGame extends ApplicationAdapter {
     int Piy = 0;
 
     int[][] pos = {{Rx,Ry},{Bx,By},{Pix,Piy},{Ox,Oy}};
-    
+
     int lives = 3;
     String main_time="";
     Ghost red = new Ghost("red");
     Ghost blue = new Ghost("blue");
-	Ghost pink = new Ghost("pink");
-	Ghost orange = new Ghost("orange");
+    Ghost pink = new Ghost("pink");
+    Ghost orange = new Ghost("orange");
 
     Ghost[] ghosts = new Ghost[4];
 
-	
-	String state = "RIGHT";//pacmans state
-	Pacman p = new Pacman();
+
+    String state = "RIGHT";//pacmans state
+    Pacman p = new Pacman();
 
 
     Timer t = new Timer();
@@ -76,31 +81,40 @@ public class MyGdxGame extends ApplicationAdapter {
 
 
     @Override
-	public void create () {
-		Gdx.graphics.setWindowedMode(672, 800);
-		backg_animation_count=0;
+    public void create () {
+        Gdx.graphics.setWindowedMode(672, 800);
+        backg_animation_count=0;
 
-		batch = new SpriteBatch();
-		backgroundTexture = new Texture("fullLevel.png");
-		backgroundTexture_win= new Texture("fullLevel_winner.png");
-		pac = new Texture("Original_PacMan_RIGHT1.png");
-		Main_Menu= new Texture("Main_Menu.png");
-		play_btn=new Texture("Play_button.png");
-		play_btn_hover=new Texture("Play_button_Hover.png");
-		redG = new Texture("redL.png");
-		dot=new Texture("point1.png");
+        batch = new SpriteBatch();
+        backgroundTexture = new Texture("fullLevel.png");
+        backgroundTexture_win= new Texture("fullLevel_winner.png");
+        pac = new Texture("Original_PacMan_RIGHT1.png");
+        Main_Menu= new Texture("Main_Menu.png");
+        play_btn=new Texture("Play_button.png");
+        play_btn_hover=new Texture("Play_button_Hover.png");
+        redG = new Texture("redL.png");
+        dot=new Texture("point1.png");
         big_dot=new Texture("big_point1.png");
-		font = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
-		time = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
+        font = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
+        time = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
         you_win = new Texture("you_win.png");
         you_lose= new Texture("you_lose.png");
-		sr = new ShapeRenderer();
-		
-		life = new Texture("Original_PacMan_RIGHT1.png");
-		
-		
+        sr = new ShapeRenderer();
 
-	}
+        siren = Gdx.audio.newSound(Gdx.files.internal("siren.wav"));
+        intro =Gdx.audio.newSound(Gdx.files.internal("pacman_beginning.wav"));
+        siren.loop(0.2f);
+        intro.loop(0.05f);
+
+        siren.pause();
+
+
+
+        life = new Texture("Original_PacMan_RIGHT1.png");
+
+
+
+    }
 
     public void total_reset(){
         Px=0;
@@ -141,18 +155,20 @@ public class MyGdxGame extends ApplicationAdapter {
 
     }
 
-	@Override
-	public void render () {
+    @Override
+    public void render () {
 
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         if(start){
             starting_menu();
-        }
-        
-        else{
 
+
+        }
+
+        else{
+            intro.stop();
             batch.draw(backgroundTexture,0,0);
             if((p.winner() || lives==0) && total_backg_animation_count<=120){
 
@@ -171,7 +187,7 @@ public class MyGdxGame extends ApplicationAdapter {
                     batch.draw(you_win,186,400);
                 }
                 if(lives==0){
-                  batch.draw(you_lose,186,400);
+                    batch.draw(you_lose,186,400);
 
                 }
 
@@ -191,13 +207,18 @@ public class MyGdxGame extends ApplicationAdapter {
 
             }
             else {
+
                 state = p.state();
                 pac=p.pac_pic();
                 System.out.println(lives);
                 System.out.println(total_backg_animation_count+"TTTTTTTTTTT");
                 if(p.winner()!=true && lives!=0){
+                    siren.resume();
                     movement();//moves player and ghosts
 
+                }
+                else {
+                    siren.pause();
                 }
 
                 drawO();
@@ -209,7 +230,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
                 batch.draw(pac, Px, Py);
 
-                for(int i = 0; i < 4; i++){
+                for(int i = 0; i < 4; i++){//saaaaaaaaa
                     if(lives>=1){
                         if(ghosts[i].touchPac()){
                             lives -=1;
@@ -263,10 +284,12 @@ public class MyGdxGame extends ApplicationAdapter {
     public void starting_menu(){
         batch.draw(Main_Menu,0,0);
         batch.draw(play_btn,224,371);
-        
+
+
         int mx=Gdx.input.getX();
         int my=Gdx.input.getY();
-        
+        System.out.println("X:"+mx+" Y:"+my);
+
         if(mx>=224 && mx<=449 && my>=371 && my<=429){
             batch.draw(play_btn_hover,224,371);
             if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
@@ -275,60 +298,55 @@ public class MyGdxGame extends ApplicationAdapter {
             }
         }
     }
-    
+
     public void movement(){
         ghosts[0] = red;
         ghosts[1] = blue;
         ghosts[2] = pink;
         ghosts[3] = orange;
-        
+
+
 
         Px = p.move()[0];
         Py = p.move()[1];
-        
+
+
+
         for(int i = 0; i < ghosts.length; i++){
             pos[i][0] = ghosts[i].move(Px,Py)[0];
             pos[i][1] = ghosts[i].move(Px,Py)[1];
         }
     }
-    
+
     public void timer(){
-        if(blue.data_send() && blue.scared_send()){
-            p.points_add(100);
+
+        for(int i = 0; i < 4; i++){
+            if(lives >= 1) {
+                if (ghosts[i].canGive) {
+                    p.points_add(200);
+                    ghosts[i].canGive = false;
+                }
+            }
         }
-        if(red.data_send() && red.scared_send()){
-            p.points_add(100);
-        }
-        if(pink.data_send() && pink.scared_send()){
-            p.points_add(100);
-        }
-        if(orange.data_send() && orange.scared_send()){
-            p.points_add(100);
-        }
+
+
         String points = "SCORE: "+p.grub()[0];
         font.draw(batch, points, 0,788);
         t.stop();
-        
+
         int secs = (int)t.getElapsedTimeSecs();
-        if(p.winner() && main_time.length()==0){
-           main_time = t.time_converter(secs);
-        }
+
         String time_display= t.time_converter(secs);
-        if(p.winner()){
-            time_display=main_time;
-        }
         String elap = "TIME: "+time_display;
         time.draw(batch,elap,250,788);
     }
 
-
-
-    
     public void drawO(){//drawing ghost positions
         batch.draw(red.ghost_pic(),pos[0][0],pos[0][1]);
-        batch.draw(blue.ghost_pic(),pos[1][0],pos[1][1]);
         batch.draw(pink.ghost_pic(),pos[2][0],pos[2][1]);
         batch.draw(orange.ghost_pic(),pos[3][0],pos[3][1]);
+        batch.draw(blue.ghost_pic(),pos[1][0],pos[1][1]);
+
 
     }
     public void scared(){
@@ -348,15 +366,15 @@ public class MyGdxGame extends ApplicationAdapter {
 
 
         p.reset();
-        
-        
+
+
     }
 
-	@Override
-	public void dispose () {
-		batch.dispose();
-		pac.dispose();
-		font.dispose();
-		sr.dispose();
-	}
+    @Override
+    public void dispose () {
+        batch.dispose();
+        pac.dispose();
+        font.dispose();
+        sr.dispose();
+    }
 }
