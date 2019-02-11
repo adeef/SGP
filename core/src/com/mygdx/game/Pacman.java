@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.*;
@@ -16,9 +17,17 @@ public class Pacman {
     private int Ay = y;
     private int animation_count=0;
     int frame=1;
-    
-    public boolean keyHit = false;
+    Music munch;
 
+    
+    public void munch_sound(){
+        munch = Gdx.audio.newMusic(Gdx.files.internal("pac_munch.wav"));
+        munch.setVolume(0.1f);
+        if(!munch.isPlaying()){
+            munch.play();
+        }
+    }
+    
     private int[][] level = {
             {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 5, 4, 0, 4, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
             {4, 2, 2, 2, 2, 4, 4, 3, 2, 2, 2, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 2, 2, 2, 2, 2, 3, 2, 2, 4},
@@ -56,8 +65,7 @@ public class Pacman {
         Ax = x/24;
         Ay = y/24;
 
-        int mx= Gdx.input.getX();
-        int my= Gdx.input.getY();
+
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && level[Ax+1][Ay] != 4 && level[Ax+1][Ay] != 5 ) {
             state = "RIGHT";
         }
@@ -105,20 +113,7 @@ public class Pacman {
         
         return state;
     }
-    public void key(){
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            keyHit = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            keyHit = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            keyHit = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            keyHit = true;
-        }
-    }
+
     public ArrayList<int[]> drawing(int check){//drawing dots
         ArrayList<int[]> dots = new ArrayList<int[]>();
         for(int i = 0; i < 28;i++){
@@ -151,6 +146,7 @@ public class Pacman {
         
         if(level[Ax][Ay] == 2){
             points+=10;
+            munch_sound();
             
             level[Ax][Ay] = 0;
             
@@ -158,6 +154,7 @@ public class Pacman {
         if(level[Ax][Ay] == 3){
             points+=50;
             level[Ax][Ay] = 0;
+            munch_sound();
         }
 
         int[] r = new int[3];
@@ -184,7 +181,7 @@ public class Pacman {
         boolean eaten = level[x/24][y/24] == 3;
         return eaten;
     }
-
+    
     public Texture pac_pic(){
         if(animation_count==10){
             if(frame==1){

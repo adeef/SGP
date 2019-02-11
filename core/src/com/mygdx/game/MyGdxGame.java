@@ -3,6 +3,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -31,7 +33,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	Texture big_dot;
 	BitmapFont time;
 	BitmapFont highScore;
-	
+    Sound intro;
+    Sound siren;
 	ShapeRenderer sr;
 	Texture redG;
 	
@@ -102,11 +105,20 @@ public class MyGdxGame extends ApplicationAdapter {
 		highScore = new BitmapFont(Gdx.files.internal("joystix.fnt"),Gdx.files.internal("joystix.png"),false);
         you_win = new Texture("you_win.png");
         you_lose= new Texture("you_lose.png");
-		sr = new ShapeRenderer();
-		
-		life = new Texture("Original_PacMan_RIGHT1.png");
-		
-		
+        sr = new ShapeRenderer();
+
+        siren = Gdx.audio.newSound(Gdx.files.internal("siren.wav"));
+        intro =Gdx.audio.newSound(Gdx.files.internal("pacman_beginning.wav"));
+        siren.loop(0.2f);
+        intro.loop(0.05f);
+
+        siren.pause();
+
+
+
+        life = new Texture("Original_PacMan_RIGHT1.png");
+
+
 
 	}
 
@@ -163,7 +175,7 @@ public class MyGdxGame extends ApplicationAdapter {
         }
 
         else{
-
+            intro.stop();
             batch.draw(backgroundTexture,0,0);
             if((p.winner() || lives==0) && total_backg_animation_count<=120){
 
@@ -197,8 +209,6 @@ public class MyGdxGame extends ApplicationAdapter {
                         }
                     }
 
-
-
                 }
                 if(lives==0){
                     batch.draw(you_lose,186,400);
@@ -225,8 +235,13 @@ public class MyGdxGame extends ApplicationAdapter {
                 pac=p.pac_pic();
 
                 if(!p.winner() && lives!=0){
+                    siren.resume();
+
                     movement();//moves player and ghosts
 
+                }
+                else {
+                    siren.pause();
                 }
 
                 drawO();
