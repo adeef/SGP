@@ -8,8 +8,8 @@ import java.util.*;
 
 public class Pacman {
 
-    private static int x = 13*24;
-    private static int y = 13*24;
+    private static int x = 2*24;
+    private static int y = 1*24;
     private static String state = "RIGHT";
     private static int points;
     private int Ax = x;//position in array
@@ -199,5 +199,8 @@ public class Pacman {
         Texture pic = new Texture("Original_PacMan_"+state+frame+".png");
         return pic;
 
+    }
+    public int getPoints(){
+        return points;
     }
 }

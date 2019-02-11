@@ -92,6 +92,7 @@ public class Ghost {
 
     public int[] move(int PacX,int PacY){
         isEaten();
+        System.out.println(touchPac());
 
         if(eaten && x/24 == 1 && y/24 == 1){//once home is reached
             scared = false;
@@ -119,36 +120,50 @@ public class Ghost {
             int[] pos = new int[2];
             int Ax = x / 24;
             int Ay = y / 24;
-
-            state = shortestPath(PacX/24,PacY/24);//calculate shortest path
-            //shortP(new ArrayList<String>(),x/24,y/24,PacX/24,PacY/24);
-            //System.out.println(shortCuts);
-
-
-            if(state.equals("")){
-                state = "up";
-            }
-
-
-            if (state.equals("right")) {
+            
+            if(Ax + 1 == PacX/24 && PacY/24 == Ay){
                 x += movement;
-            } else if (state.equals("left")) {
+            }
+            else if(Ax -1 == PacX/24 && PacY/24 == Ay){
                 x -= movement;
-            } else if (state.equals("up")) {
+            }
+            else if(Ax == PacX/24 && PacY/24 == Ay+1){
                 y += movement;
-            } else if (state.equals("down")) {
+            }
+            else if(Ax == PacX/24 && PacY/24 == Ay-1){
                 y -= movement;
             }
-            if (x <= 24) {//allows for side teleportation 
-                x = 647;
-            }
-            if (x >= 648) {
-                x = 24;
-            }
 
-            prevAx = Ax;
-            prevAy = Ay;
 
+            else {
+                state = shortestPath(PacX / 24, PacY / 24);//calculate shortest path
+                //shortP(new ArrayList<String>(),x/24,y/24,PacX/24,PacY/24);
+                //System.out.println(shortCuts);
+
+
+                if (state.equals("")) {
+                    state = "up";
+                }
+
+                if (state.equals("right")) {
+                    x += movement;
+                } else if (state.equals("left")) {
+                    x -= movement;
+                } else if (state.equals("up")) {
+                    y += movement;
+                } else if (state.equals("down")) {
+                    y -= movement;
+                }
+                if (x <= 24) {//allows for side teleportation 
+                    x = 647;
+                }
+                if (x >= 648) {
+                    x = 24;
+                }
+
+                prevAx = Ax;
+                prevAy = Ay;
+            }
 
             pos[0] = x / 24 * 24;//rounding position to match a 24x24 box
             pos[1] = y / 24 * 24;
