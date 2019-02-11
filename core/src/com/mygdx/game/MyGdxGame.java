@@ -177,6 +177,8 @@ public class MyGdxGame extends ApplicationAdapter {
         else{
             intro.stop();
             batch.draw(backgroundTexture,0,0);
+
+
             if((p.winner() || lives==0) && total_backg_animation_count<=120){
 
                 if(backg_animation_count>=12){
@@ -212,6 +214,20 @@ public class MyGdxGame extends ApplicationAdapter {
                 }
                 if(lives==0){
                     batch.draw(you_lose,186,400);
+                    highScore.draw(batch, "HIGH SCORE: " + (int)highS, 200, 200);
+
+                    if(won == 1) {
+                        try {
+                            highScore score = new highScore();
+                            score.addLine(p.getPoints());
+                            score.close();
+                            won += 1;
+                            highS = score.high();
+
+                        }
+                        catch (Exception e) {
+                        }
+                    }
 
                 }
 

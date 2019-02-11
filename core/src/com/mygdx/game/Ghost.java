@@ -116,7 +116,7 @@ public class Ghost {
         this.PacY = PacY;
 
 
-        if(color.equals("blue")){
+        if((Math.pow(Math.pow(x/24-PacX/24,2) + Math.pow(y/24-PacY/24,2),0.5) < 6 && !scared)){
             int[] pos = new int[2];
             int Ax = x / 24;
             int Ay = y / 24;
